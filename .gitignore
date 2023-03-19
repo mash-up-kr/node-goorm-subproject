@@ -17,3 +17,6 @@ dist
 # Use pnpm
 yarn.lock
 package-lock.json
+
+# turbo artifacts
+.turbo
