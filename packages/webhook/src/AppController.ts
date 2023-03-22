@@ -1,7 +1,7 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res, Post } from '@nestjs/common';
 import { AppService } from './AppService';
 import { FastifyReply } from 'fastify';
-
+import { spawn } from 'child_process';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
@@ -18,5 +18,16 @@ export class AppController {
     outgoingMessage.end();
 
     // return await this.appService.updateMainServer({ sha });
+  }
+  @Post('/deploy')
+  async deploy(@Res() response: FastifyReply) {
+    try {
+      spawn('sh', ['../cicd-script.sh']);
+    } catch (error) {
+      if (error) {
+        // TODO handle error -> send discord alarm??
+        console.error('Error while deploying', error);
+      }
+    }
   }
 }
