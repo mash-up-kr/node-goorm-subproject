@@ -10,5 +10,8 @@
   "author": {
     "name": "Karl Saehun Chung",
     "email": "nycom13@gmail.com"
+  },
+  "dependencies": {
+    "@nestjs/axios": "^2.0.0"
   }
 }

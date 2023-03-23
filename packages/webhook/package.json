@@ -43,8 +43,10 @@
     }
   },
   "dependencies": {
+    "@nestjs/axios": "^2.0.0",
     "@nestjs/common": "^9.3.10",
     "@nestjs/core": "^9.3.10",
+    "@nestjs/platform-express": "^9.3.12",
     "@nestjs/platform-fastify": "^9.3.10",
     "@nestjs/testing": "^9.3.10",
     "fastify": "^4.14.1",
