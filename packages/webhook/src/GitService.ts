@@ -12,11 +12,10 @@ export class GitService {
   }
 
   async safeCheckout(sha: string) {
-    await runAll(`
+    return await runAll(`
+      git fetch --all
       git reset --hard
       git clean -fd
-      git checkout master
-      git pull origin master
       git checkout ${sha}
     `);
   }

@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'app',
       cwd: './packages/app/',
-      script: './packages/app/dist/index.js',
+      script: './dist/index.js',
       env: {
         PORT: 3000,
       },
@@ -11,7 +11,7 @@ module.exports = {
     {
       name: 'webhook',
       cwd: './packages/webhook/',
-      script: './packages/webhook/dist/index.js',
+      script: './dist/index.js',
       env: {
         PORT: 3100,
       },

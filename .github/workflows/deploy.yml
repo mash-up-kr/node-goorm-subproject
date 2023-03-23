@@ -1,0 +1,69 @@
+name: Deploy
+push:
+  branches: [master]
+
+env:
+  PNPM_CACHE_FOLDER: |
+    /home/runner/.pnpm-store/v3
+  BUILD_CACHE_FOLDER: |
+    ${{ github.workspace }}/packages/**/dist
+    ${{ github.workspace }}/packages/**/esm
+  DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+  COMMIT_SHA: ${{ github.sha }}
+
+jobs:
+  prepare:
+    name: Install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - name: Compute dependency cache key
+        id: compute_lockfile_hash
+        run: echo "::set-output name=hash::${{ hashFiles('pnpm-lock.yaml') }}"
+      - uses: ./.github/actions/pull-request-common
+        with:
+          cache_path: ${{ env.PNPM_CACHE_FOLDER }}
+          cache_key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+    outputs:
+      dependency_cache_key: ${{ steps.compute_lockfile_hash.outputs.hash }}
+
+  build:
+    name: Build
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pull-request-common
+        with:
+          cache_path: ${{ env.PNPM_CACHE_FOLDER }}
+          cache_key: ${{ needs.prepare.outputs.dependency_cache_key }}
+      - name: Build packages
+        run: turbo build
+      - name: Save build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.BUILD_CACHE_FOLDER }}
+          key: 'build-cache-${{ github.sha }}'
+    outputs:
+      dependency_cache_key: ${{ needs.prepare.outputs.dependency_cache_key }}
+
+  deploy:
+    name: Deploy Live
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/pull-request-common
+        with:
+          cache_path: ${{ env.PNPM_CACHE_FOLDER }}
+          cache_key: ${{ needs.build.outputs.dependency_cache_key }}
+      - name: Restore build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.BUILD_CACHE_FOLDER }}
+          key: 'build-cache-${{ github.sha }}'
+      - name: Restart service
+        run: turbo restart:prod

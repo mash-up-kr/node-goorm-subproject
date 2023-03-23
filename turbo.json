@@ -5,7 +5,10 @@
       "outputs": ["dist/**"]
     },
     "test": {},
-    "//#run": {
+    "//#start:prod": {
+      "dependsOn": ["^build"]
+    },
+    "//#restart:prod": {
       "dependsOn": ["^build"]
     }
   }

@@ -6,9 +6,16 @@
     "type": "git",
     "url": "https://github.com/mash-up-kr/node-goorm-subproject"
   },
+  "scripts": {
+    "start:prod": "pm2 start pm2.config.js",
+    "restart:prod": "pm2 restart pm2.config.js"
+  },
   "license": "MIT",
   "author": {
     "name": "Karl Saehun Chung",
     "email": "nycom13@gmail.com"
+  },
+  "dependencies": {
+    "got": "^11"
   }
 }

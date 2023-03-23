@@ -1,27 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { GitService } from './GitService';
 import { runAll } from './utils/run';
 
 @Injectable()
 export class AppService {
+  constructor(private readonly gitService: GitService) {}
+
   async update(sha: string) {
-    return await runAll(`
-      git reset --hard
+    const gitResults = await this.gitService.safeCheckout(sha);
+    if (gitResults.some(({ success }) => success === false)) {
+      return gitResults;
+    }
 
-      git clean -fd
-
-      git checkout master
-
-      git pull origin master
-
-      git checkout ${sha}
-
+    const packageResult = await runAll(`
       pnpm install --frozen-lockfile
-
-      turbo build
-
-      pm2 reload app
-
-      pm2 reload webhook
+      turbo start:prod
     `);
+
+    return [...gitResults, ...packageResult];
   }
 }
