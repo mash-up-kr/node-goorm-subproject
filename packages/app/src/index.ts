@@ -11,7 +11,7 @@ async function main() {
   });
 
   app.listen(PORT, () => {
-    console.log(`webhook starts listening on port ${PORT}`);
+    console.log(`tastyzip good server starts listening on port ${PORT}`);
   });
 }
 

@@ -2,6 +2,7 @@ import { Controller, Get, Param, Res, Post } from '@nestjs/common';
 import { AppService } from './AppService';
 import { FastifyReply } from 'fastify';
 import { spawn } from 'child_process';
+
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
